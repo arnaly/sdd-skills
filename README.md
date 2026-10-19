@@ -1,14 +1,14 @@
 # SDD Skills
 
-Tu metodología de Spec Driven Development para Codex: ocho skills, documentos
+Metodología de Spec Driven Development para Codex: ocho skills, documentos
 versionados con el código y aprobación antes de implementar. Independiente del
 lenguaje y del framework, para proyectos nuevos y existentes.
 
-## Instalar una vez
+## Instalar en un proyecto
 
 Requiere Node.js 20 o posterior con npm y Git. El repositorio es público;
 la instalación no necesita una cuenta de GitHub ni una clave SSH.
-Ejecuta desde cualquier carpeta:
+Ejecuta desde la raíz del repositorio donde quieras usar SDD:
 
 ```bash
 npx --yes --allow-git=all github:arnaly/sdd-skills
@@ -18,13 +18,13 @@ npm obtiene el paquete público desde GitHub, lo guarda en su caché
 y ejecuta el instalador. Sin subcomando se usa `install`. `--allow-git=all`
 autoriza esta descarga de Git en npm 12;
 no cambia su configuración global. No necesitas clonar este repositorio ni
-instalar Python. Las ocho skills y sus
-plantillas se copian a `~/.agents/skills` y quedan disponibles para tu usuario
-en Codex desde todos tus proyectos.
+instalar Python. Las ocho skills y sus plantillas se copian a `./skills`,
+dentro del repositorio actual. Repite la instalación en cada proyecto donde
+quieras usarlas.
 
-El comando no crea una constitución ni modifica `AGENTS.md`, `package.json` o
-archivos del proyecto desde el que lo ejecutas. La adopción del método se hace
-después con las skills.
+El comando crea las carpetas `skills/sdd-*`. No crea una constitución ni modifica
+`AGENTS.md`, `package.json` u otros archivos existentes del proyecto. La adopción
+del método se hace después con las skills.
 
 También puedes elegir un destino de skills reconocido por tu entorno:
 
@@ -42,7 +42,7 @@ npx --yes --allow-git=all github:arnaly/sdd-skills update
 ```
 
 La actualización es explícita y conserva las carpetas reemplazadas, incluidos tus
-cambios locales, en una carpeta hermana del destino: `~/.agents/.skills-sdd-backups/`
+cambios locales, en una carpeta hermana del destino: `./.skills-sdd-backups/`
 para la instalación por defecto. Imprime la ubicación exacta de la copia. Las copias
 y la preparación temporal quedan fuera del directorio de skills para evitar que
 el asistente descubra versiones antiguas o incompletas.
@@ -144,7 +144,8 @@ npm test
 ```
 
 El instalador Python original se conserva para instalaciones locales desde un
-clon (`python3 scripts/install.py`). Sus pruebas se ejecutan con
+clon (`python3 /ruta/al/clon/scripts/install.py`, ejecutado desde el proyecto de
+destino). También instala por defecto en `./skills`. Sus pruebas se ejecutan con
 `python3 -m unittest discover -s tests -v`. La instalación con `npx` solo usa Node.js.
 
 Los tests comprueban instalación, conflictos, recuperación y recursos empaquetados.

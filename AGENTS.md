@@ -26,7 +26,8 @@ Las instrucciones, plantillas y documentación se mantienen en español.
   deben usar rutas relativas a su propia carpeta.
 - Conserva las garantías del instalador: instalación idéntica sin cambios,
   detección de conflictos antes de instalar, actualización explícita con respaldo
-  y recuperación ante fallos. No debe modificar el proyecto desde el que se ejecuta.
+  y recuperación ante fallos. Instala por defecto en `./skills` del proyecto
+  desde el que se ejecuta, conservando sus demás archivos.
 - Usa destinos temporales para comprobar instalaciones; no actualices las skills
   globales del usuario como parte de una prueba.
 - Mantén sincronizados `VERSION` y la versión de `package.json` cuando se autorice

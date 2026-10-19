@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import { readFileSync } from 'node:fs';
-import { homedir } from 'node:os';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { installSkills } from '../scripts/install.mjs';
@@ -11,18 +10,18 @@ const help = `Uso: sdd-skills [install|update] [--dest DIRECTORIO]
 
   install       Instalar las ocho skills (opción por defecto).
   update        Actualizar las instalaciones propias, con copia de respaldo.
-  --dest RUTA   Destino de skills; por defecto ~/.agents/skills.
+  --dest RUTA   Destino de skills; por defecto ./skills en el repositorio actual.
   --help        Mostrar esta ayuda.
   --version     Mostrar la versión.
 
-No modifica archivos del proyecto desde el que lo ejecutas.`;
+Instala las skills en el proyecto desde el que lo ejecutas.`;
 
 try {
   if (Number(process.versions.node.split('.')[0]) < 20) {
     throw new Error('Se necesita Node.js 20 o posterior.');
   }
   const args = process.argv.slice(2);
-  let destination = resolve(homedir(), '.agents', 'skills');
+  let destination = resolve('skills');
   let command;
   let mode;
   for (let index = 0; index < args.length; index += 1) {

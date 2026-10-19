@@ -164,7 +164,7 @@ for (const update of [false, true]) {
   });
 }
 
-test('CLI works from an unrelated project without changing its files', (t) => {
+test('CLI honors an explicit destination without changing the calling project', (t) => {
   const { base, destination } = fixture(t);
   const project = join(base, 'another-project');
   fs.mkdirSync(project);
@@ -176,6 +176,39 @@ test('CLI works from an unrelated project without changing its files', (t) => {
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /Instaladas\/actualizadas: 8/);
   assert.deepEqual(snapshot(project), before);
+});
+
+test('CLI installs and updates in ./skills of the calling project by default', (t) => {
+  const { base } = fixture(t);
+  const project = join(base, 'current project');
+  const home = join(base, 'home');
+  fs.mkdirSync(project);
+  fs.mkdirSync(home);
+  fs.writeFileSync(join(project, 'AGENTS.md'), 'Keep existing instructions.\n');
+  fs.writeFileSync(join(project, 'package.json'), '{"name":"caller"}\n');
+  const before = snapshot(project);
+  const destination = join(project, 'skills');
+  const run = (...args) => spawnSync(process.execPath, [join(root, 'bin', 'sdd-skills.mjs'), ...args], {
+    cwd: project, env: { ...process.env, HOME: home, USERPROFILE: home }, encoding: 'utf8',
+  });
+  for (const args of [[], ['install']]) {
+    const result = run(...args);
+    assert.ifError(result.error);
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, args.length ? /sin cambios: 8/ : /Instaladas\/actualizadas: 8/);
+  }
+  for (const name of SKILLS) assert.ok(fs.existsSync(join(destination, name, 'SKILL.md')));
+  fs.writeFileSync(join(destination, 'sdd-plan', 'SKILL.md'), 'local edit');
+  const updated = run('update');
+  assert.ifError(updated.error);
+  assert.equal(updated.status, 0, updated.stderr);
+  assert.match(updated.stdout, /Instaladas\/actualizadas: 1/);
+  const backups = join(project, '.skills-sdd-backups');
+  const [backup] = fs.readdirSync(backups);
+  assert.equal(fs.readFileSync(join(backups, backup, 'sdd-plan', 'SKILL.md'), 'utf8'), 'local edit');
+  for (const [path, content] of Object.entries(before)) assert.equal(snapshot(project)[path], content);
+  assert.ok(!fs.existsSync(join(project, '.agents')));
+  assert.deepEqual(fs.readdirSync(home), []);
 });
 
 test('help, version and invalid arguments do not install anything', (t) => {
@@ -215,12 +248,14 @@ test('the npm package installs offline outside the clone with all bundled resour
   fs.writeFileSync(join(project, 'package.json'), '{"name":"caller","version":"1.0.0"}\n');
   fs.writeFileSync(join(project, 'AGENTS.md'), 'Keep existing instructions.\n');
   const before = snapshot(project);
-  const destination = join(base, 'installed');
-  const result = spawnSync('npm', ['exec', '--yes', `--package=${join(base, info.filename)}`, '--', 'sdd-skills', 'install', '--dest', destination], { cwd: project, env, encoding: 'utf8' });
+  const destination = join(project, 'skills');
+  const result = spawnSync('npm', ['exec', '--yes', `--package=${join(base, info.filename)}`, '--', 'sdd-skills', 'install'], { cwd: project, env, encoding: 'utf8' });
   assert.ifError(result.error);
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /Instaladas\/actualizadas: 8/);
-  assert.deepEqual(snapshot(project), before);
+  const after = snapshot(project);
+  for (const [path, content] of Object.entries(before)) assert.equal(after[path], content);
+  assert.deepEqual(fs.readdirSync(project).sort(), ['AGENTS.md', 'package.json', 'skills']);
   assert.ok(fs.existsSync(join(destination, 'sdd-specify', 'references', 'ears.md')));
   assert.ok(fs.existsSync(join(destination, 'sdd-validate', 'assets', 'validation.md')));
 });

@@ -179,6 +179,34 @@ class InstallerTests(unittest.TestCase):
         self.assertIn("Instaladas/actualizadas: 8", result.stdout)
         self.assertTrue((self.destination / "sdd-validate" / "assets" / "validation.md").is_file())
 
+    def test_cli_installs_and_updates_in_current_project_by_default(self):
+        project = self.base / "current project"
+        project.mkdir()
+        instructions = project / "AGENTS.md"
+        instructions.write_text("Keep existing instructions.\n", encoding="utf-8")
+        destination = project / "skills"
+        for args, expected in (([], "Instaladas/actualizadas: 8"), ([], "sin cambios: 8")):
+            result = subprocess.run(
+                [sys.executable, str(ROOT / "scripts" / "install.py"), *args],
+                cwd=project, capture_output=True, text=True,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn(expected, result.stdout)
+        for name in installer.SKILLS:
+            self.assertTrue((destination / name / "SKILL.md").is_file())
+        edited = destination / "sdd-plan" / "SKILL.md"
+        edited.write_text("local edit", encoding="utf-8")
+        result = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "install.py"), "--update"],
+            cwd=project, capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Instaladas/actualizadas: 1", result.stdout)
+        backup, = (project / ".skills-sdd-backups").iterdir()
+        self.assertEqual((backup / "sdd-plan" / "SKILL.md").read_text(), "local edit")
+        self.assertEqual(instructions.read_text(), "Keep existing instructions.\n")
+        self.assertFalse((project / ".agents").exists())
+
 
 class PackageTests(unittest.TestCase):
     def test_exactly_eight_skills_with_matching_names_and_descriptions(self):
