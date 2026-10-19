@@ -15,6 +15,33 @@ Desde este repositorio:
 python3 scripts/install.py
 ```
 
+Esta orden instala las skills para tu usuario. Si quieres preparar también un
+repositorio destino en la misma orden, pasa `--project` como se muestra abajo.
+
+Para instalar las skills **y preparar otro repositorio con una sola orden**, abre
+el terminal dentro del repositorio destino y ejecuta la ruta de tu clon:
+
+```bash
+python3 /ruta/a/sdd-skills/scripts/install.py --project .
+```
+
+En tu entorno actual, el clon está en `/home/arnau/github_repos/sdd-skills`; desde
+la raíz del repositorio destino, el comando concreto es:
+
+```bash
+python3 /home/arnau/github_repos/sdd-skills/scripts/install.py --project .
+```
+
+Instala las skills para tu usuario, añade una sección SDD gestionada a su
+`AGENTS.md` y crea `docs/constitution.md` como borrador, si no existe. Conserva
+el resto de `AGENTS.md` y no reemplaza una constitución existente. Repetirlo es
+seguro: actualiza su propia sección, conserva la constitución y deja intactas las
+skills que no hayan cambiado.
+
+Luego, en Codex abierto en el repositorio, usa `$sdd-constitution` para acordar
+los seis principios. La orden crea el borrador, pero no puede inventar ni aprobar
+esos principios por ti.
+
 Instala las ocho skills y sus recursos en `~/.agents/skills`, disponibles para tu
 usuario en Codex. También puedes elegir un destino de skills reconocido por tu
 entorno:
@@ -23,7 +50,8 @@ entorno:
 python3 scripts/install.py --dest /ruta/a/skills
 ```
 
-No necesita red ni modifica proyectos, `AGENTS.md` o la configuración de Codex.
+El instalador no necesita red ni modifica proyectos, `AGENTS.md` o la configuración
+de Codex salvo que pases `--project` expresamente.
 Una instalación idéntica no cambia nada. Si hay diferencias, aborta antes de
 instalar ninguna skill. No reemplaza archivos, enlaces ni carpetas ajenas.
 
