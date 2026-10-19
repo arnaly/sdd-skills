@@ -1,0 +1,4 @@
+interface:
+  display_name: "Implementación del cambio"
+  short_description: "Ejecuta tareas aprobadas y registra evidencias"
+  default_prompt: "Usa $sdd-implement para trabajar en esta fase SDD del proyecto."

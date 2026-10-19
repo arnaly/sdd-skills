@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tareas del cambio"
+  short_description: "Desglosa tareas trazables con condiciones de cierre"
+  default_prompt: "Usa $sdd-tasks para trabajar en esta fase SDD del proyecto."

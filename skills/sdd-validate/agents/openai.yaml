@@ -1,0 +1,4 @@
+interface:
+  display_name: "Validación del cambio"
+  short_description: "Comprueba cada requisito y consolida la spec vigente"
+  default_prompt: "Usa $sdd-validate para trabajar en esta fase SDD del proyecto."

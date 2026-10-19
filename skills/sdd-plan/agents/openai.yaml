@@ -1,0 +1,4 @@
+interface:
+  display_name: "Planificación técnica"
+  short_description: "Diseña módulos, contratos y decisiones del cambio"
+  default_prompt: "Usa $sdd-plan para trabajar en esta fase SDD del proyecto."

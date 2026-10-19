@@ -1,0 +1,4 @@
+interface:
+  display_name: "Clarificación de requisitos"
+  short_description: "Revisa ambigüedades y huecos antes de planificar"
+  default_prompt: "Usa $sdd-clarify para trabajar en esta fase SDD del proyecto."

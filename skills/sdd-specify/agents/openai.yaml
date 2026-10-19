@@ -1,0 +1,4 @@
+interface:
+  display_name: "Especificación del cambio"
+  short_description: "Define requisitos EARS y criterios de aceptación"
+  default_prompt: "Usa $sdd-specify para trabajar en esta fase SDD del proyecto."

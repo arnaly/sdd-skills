@@ -1,0 +1,4 @@
+interface:
+  display_name: "Constitución del proyecto"
+  short_description: "Acuerda seis principios verificables del proyecto"
+  default_prompt: "Usa $sdd-constitution para trabajar en esta fase SDD del proyecto."

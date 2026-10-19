@@ -1,0 +1,4 @@
+interface:
+  display_name: "Contexto del agente"
+  short_description: "Prepara AGENTS.md conservando las instrucciones"
+  default_prompt: "Usa $sdd-context para trabajar en esta fase SDD del proyecto."
