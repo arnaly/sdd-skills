@@ -11,11 +11,12 @@ la instalación no necesita una cuenta de GitHub ni una clave SSH.
 Ejecuta desde cualquier carpeta:
 
 ```bash
-npx --yes --allow-git=all git+https://github.com/arnaly/sdd-skills.git install
+npx --yes --allow-git=all github:arnaly/sdd-skills
 ```
 
-npm obtiene el paquete desde GitHub por HTTPS, lo guarda en su caché
-y ejecuta el instalador. `--allow-git=all` autoriza esta descarga de Git en npm 12;
+npm obtiene el paquete público desde GitHub, lo guarda en su caché
+y ejecuta el instalador. Sin subcomando se usa `install`. `--allow-git=all`
+autoriza esta descarga de Git en npm 12;
 no cambia su configuración global. No necesitas clonar este repositorio ni
 instalar Python. Las ocho skills y sus
 plantillas se copian a `~/.agents/skills` y quedan disponibles para tu usuario
@@ -28,7 +29,7 @@ después con las skills.
 También puedes elegir un destino de skills reconocido por tu entorno:
 
 ```bash
-npx --yes --allow-git=all git+https://github.com/arnaly/sdd-skills.git install --dest /ruta/a/skills
+npx --yes --allow-git=all github:arnaly/sdd-skills --dest /ruta/a/skills
 ```
 
 Una instalación idéntica no cambia nada. Si hay diferencias, aborta antes de
@@ -37,7 +38,7 @@ instalar ninguna skill. No reemplaza archivos, enlaces ni carpetas ajenas.
 Para actualizar una instalación gestionada por este instalador:
 
 ```bash
-npx --yes --allow-git=all git+https://github.com/arnaly/sdd-skills.git update
+npx --yes --allow-git=all github:arnaly/sdd-skills update
 ```
 
 La actualización es explícita y conserva las carpetas reemplazadas, incluidos tus
