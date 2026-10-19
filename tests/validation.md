@@ -20,9 +20,15 @@ La distribución desde GitHub se añadió después de la evaluación inicial:
 También se ejecutó la instalación directamente desde GitHub, sin un clon local:
 `npx --yes --allow-git=all git+ssh://git@github.com/arnaly/sdd-skills.git install`
 con destino y caché temporales. Resultado: ocho skills instaladas; los 26 recursos
-coinciden con el origen y el proyecto de ejecución permanece intacto. El repositorio
-es privado y se usó el acceso SSH autorizado del entorno. En npm 12 se necesita
+coinciden con el origen y el proyecto de ejecución permanece intacto. En esa
+comprobación el repositorio todavía era privado y se usó acceso SSH autorizado. En npm 12 se necesita
 `--allow-git=all`; sin esa opción, npm bloquea la descarga antes de instalar.
+
+Tras hacer público el repositorio, se repitió la instalación con
+`npx --yes --allow-git=all git+https://github.com/arnaly/sdd-skills.git install`,
+también con caché y destino temporales y sin configuración de credenciales Git.
+Resultado: ocho skills instaladas, 26 recursos idénticos al origen y archivos
+del proyecto de ejecución intactos. La orden del README utiliza este acceso HTTPS.
 
 ## Comprobaciones automatizadas
 
