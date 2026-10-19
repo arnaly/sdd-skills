@@ -1,0 +1,25 @@
+{
+  "name": "@arnaly/sdd-skills",
+  "version": "0.1.0",
+  "description": "Ocho skills reutilizables de Spec Driven Development para Codex",
+  "type": "module",
+  "bin": {
+    "sdd-skills": "bin/sdd-skills.mjs"
+  },
+  "files": [
+    "bin/",
+    "scripts/install.mjs",
+    "skills/",
+    "VERSION"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arnaly/sdd-skills.git"
+  }
+}

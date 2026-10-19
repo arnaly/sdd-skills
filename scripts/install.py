@@ -20,8 +20,6 @@ SKILLS = (
 )
 MARKER = ".sdd-install.json"
 REPOSITORY = Path(__file__).resolve().parents[1]
-PROJECT_START = "<!-- sdd-skills:project:start -->"
-PROJECT_END = "<!-- sdd-skills:project:end -->"
 
 
 class InstallError(Exception):
@@ -33,128 +31,6 @@ class InstallResult:
     installed: tuple[str, ...]
     unchanged: tuple[str, ...]
     backup: Path | None = None
-
-
-@dataclass(frozen=True)
-class ProjectResult:
-    constitution: str
-    agent_context: str
-
-
-def prepare_project(project: Path, version: str) -> ProjectResult:
-    """Añade el punto de entrada SDD y un borrador de constitución, preservando el proyecto."""
-    project = project.expanduser().resolve()
-    if not project.is_dir():
-        raise InstallError(f"El proyecto no existe o no es un directorio: {project}")
-
-    agents_path = project / "AGENTS.md"
-    docs_path = project / "docs"
-    constitution_path = docs_path / "constitution.md"
-    if agents_path.is_symlink() or (agents_path.exists() and not agents_path.is_file()):
-        raise InstallError("AGENTS.md es un enlace o no es un archivo regular.")
-    if docs_path.is_symlink() or (docs_path.exists() and not docs_path.is_dir()):
-        raise InstallError("docs/ es un enlace o no es un directorio seguro.")
-    if constitution_path.is_symlink() or (
-        constitution_path.exists() and not constitution_path.is_file()
-    ):
-        raise InstallError("docs/constitution.md es un enlace o no es un archivo regular.")
-
-    old_agents = read_utf8(agents_path) if agents_path.exists() else ""
-    start_count = old_agents.count(PROJECT_START)
-    end_count = old_agents.count(PROJECT_END)
-    if start_count != end_count or start_count > 1:
-        raise InstallError("AGENTS.md contiene marcadores SDD incompletos o duplicados.")
-
-    block = "\n".join((
-        PROJECT_START,
-        "## SDD Skills",
-        "",
-        f"Metodología Spec Driven Development, skills de usuario versión {version}.",
-        "En la primera tarea de desarrollo, usa `$sdd-constitution` para acordar",
-        "seis principios y `$sdd-context` para registrar contexto y comandos verificados.",
-        "Los principios deben acordarse; la constitución en borrador no autoriza código.",
-        "",
-        "Para cada cambio, sigue `$sdd-specify` → `$sdd-clarify` → `$sdd-plan` →",
-        "`$sdd-tasks` → aprobación explícita → `$sdd-implement` → `$sdd-validate`.",
-        "Consulta `docs/constitution.md`, `specs/current/` y el expediente bajo `specs/`.",
-        "Conserva instrucciones de agente existentes y consulta sus contradicciones.",
-        PROJECT_END,
-    ))
-    if start_count:
-        start = old_agents.index(PROJECT_START)
-        end = old_agents.index(PROJECT_END) + len(PROJECT_END)
-        if end < start:
-            raise InstallError("Los marcadores SDD de AGENTS.md están desordenados.")
-        updated_agents = old_agents[:start] + block + old_agents[end:]
-        agent_status = "actualizado" if updated_agents != old_agents else "sin cambios"
-    else:
-        separator = "\n\n" if old_agents else ""
-        updated_agents = old_agents + separator + block + "\n"
-        agent_status = "creado" if not agents_path.exists() else "actualizado"
-
-    if constitution_path.exists():
-        constitution_status = "conservada"
-        initial_constitution = None
-    else:
-        constitution_status = "borrador creado"
-        initial_constitution = (
-            REPOSITORY / "skills" / "sdd-constitution" / "assets" / "constitution.md"
-        ).read_text(encoding="utf-8")
-
-    # Preparar todo en la raíz del proyecto para que las sustituciones sean locales;
-    # si una escritura falla, restaurar AGENTS.md y retirar el borrador parcial.
-    old_agent_bytes = agents_path.read_bytes() if agents_path.exists() else None
-    created_constitution = False
-    created_docs = not docs_path.exists()
-    try:
-        if initial_constitution is not None:
-            docs_path.mkdir(exist_ok=True)
-            with constitution_path.open("x", encoding="utf-8", newline="") as stream:
-                created_constitution = True
-                stream.write(initial_constitution)
-        if not agents_path.exists() or updated_agents != old_agents:
-            agents_path.write_text(updated_agents, encoding="utf-8", newline="")
-    except OSError as error:
-        if created_constitution and constitution_path.exists():
-            constitution_path.unlink()
-        if old_agent_bytes is None:
-            if agents_path.exists():
-                agents_path.unlink()
-        else:
-            agents_path.write_bytes(old_agent_bytes)
-        if created_docs and docs_path.exists():
-            docs_path.rmdir()
-        raise InstallError(f"No se pudo preparar el proyecto; se restauró su contexto: {error}") from error
-
-    return ProjectResult(constitution_status, agent_status)
-
-
-def prepare_project_preview(project: Path) -> None:
-    """Detecta conflictos del proyecto antes de instalar las skills de usuario."""
-    project = project.expanduser().resolve()
-    if not project.is_dir():
-        raise InstallError(f"El proyecto no existe o no es un directorio: {project}")
-    agents_path = project / "AGENTS.md"
-    docs_path = project / "docs"
-    constitution_path = docs_path / "constitution.md"
-    if agents_path.is_symlink() or (agents_path.exists() and not agents_path.is_file()):
-        raise InstallError("AGENTS.md es un enlace o no es un archivo regular.")
-    if docs_path.is_symlink() or (docs_path.exists() and not docs_path.is_dir()):
-        raise InstallError("docs/ es un enlace o no es un directorio seguro.")
-    if constitution_path.is_symlink() or (
-        constitution_path.exists() and not constitution_path.is_file()
-    ):
-        raise InstallError("docs/constitution.md es un enlace o no es un archivo regular.")
-    if agents_path.exists():
-        try:
-            existing = read_utf8(agents_path)
-        except UnicodeError as error:
-            raise InstallError("AGENTS.md no es texto UTF-8; resuelve su formato antes de preparar SDD.") from error
-        starts, ends = existing.count(PROJECT_START), existing.count(PROJECT_END)
-        if starts != ends or starts > 1:
-            raise InstallError("AGENTS.md contiene marcadores SDD incompletos o duplicados.")
-        if starts and existing.index(PROJECT_END) < existing.index(PROJECT_START):
-            raise InstallError("Los marcadores SDD de AGENTS.md están desordenados.")
 
 
 def manifest(folder: Path) -> dict[str, str]:
@@ -179,12 +55,6 @@ def read_owner(folder: Path) -> dict:
         return owner if isinstance(owner, dict) else {}
     except (OSError, ValueError):
         return {}
-
-
-def read_utf8(path: Path) -> str:
-    """Read text without normalizing line endings outside the managed section."""
-    with path.open("r", encoding="utf-8", newline="") as stream:
-        return stream.read()
 
 
 def install(source: Path, destination: Path, *, update: bool = False) -> InstallResult:
@@ -299,20 +169,9 @@ def main(argv: list[str] | None = None) -> int:
         "--update", action="store_true",
         help="Actualizar instalaciones propias diferentes, conservando copia previa",
     )
-    parser.add_argument(
-        "--project", type=Path,
-        help="Instalar skills y preparar también este proyecto con AGENTS.md y una constitución en borrador",
-    )
     args = parser.parse_args(argv)
     try:
-        if args.project is not None:
-            # Resolver conflictos del proyecto antes de instalar cualquier skill.
-            prepare_project_preview(args.project)
         result = install(REPOSITORY, args.dest, update=args.update)
-        project_result = (
-            prepare_project(args.project, (REPOSITORY / "VERSION").read_text(encoding="utf-8").strip())
-            if args.project is not None else None
-        )
     except (InstallError, OSError) as error:
         print(f"Error: {error}", file=sys.stderr)
         return 1
@@ -320,10 +179,6 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Instaladas/actualizadas: {len(result.installed)}; sin cambios: {len(result.unchanged)}")
     if result.backup:
         print(f"Copia anterior: {result.backup}")
-    if project_result:
-        print(f"Proyecto: {args.project.expanduser().resolve()}")
-        print(f"Constitución: {project_result.constitution}; AGENTS.md: {project_result.agent_context}")
-        print("En Codex, usa $sdd-constitution para acordar los seis principios del proyecto.")
     return 0
 
 

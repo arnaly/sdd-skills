@@ -2,6 +2,24 @@
 
 Ejecución: 19 de octubre de 2026. Entorno de los tests: Python 3.12.3.
 
+## Distribución con npx
+
+La distribución desde GitHub se añadió después de la evaluación inicial:
+
+- `npm test`: **14 tests correctos**, ejecutados con Node.js 24.21.0 y npm 12.2.0.
+- Las **17 pruebas Python** siguen pasando para el instalador local anterior.
+- `npm pack` incluye 31 archivos: ejecutable, instalador Node, versión y recursos
+  de las ocho skills; excluye tests, documentos de desarrollo y carpetas del entorno.
+- Se instaló el paquete desde una carpeta ajena al clon mediante npm exec/npx,
+  usando caché y destino temporales. La prueba del paquete funciona sin red una
+  vez disponible su archivo, no necesita Python y conserva los archivos del proyecto.
+- Una segunda instalación dejó las ocho skills sin cambios.
+- Se comprobaron conflictos, respaldo de cambios locales, recuperación tras fallo,
+  compatibilidad con instalaciones Python, ayuda y rechazo de `--project`.
+
+La orden pública documentada descarga el paquete desde GitHub; esta prueba del
+paquete local comprueba su contenido y ejecutable de forma independiente de la red.
+
 ## Comprobaciones automatizadas
 
 - `python3 -m unittest discover -s tests -v`: **17 tests correctos**.

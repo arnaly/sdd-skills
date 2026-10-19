@@ -6,60 +6,36 @@ lenguaje y del framework, para proyectos nuevos y existentes.
 
 ## Instalar una vez
 
-Requiere Python 3.10 o posterior para el instalador; las skills son instrucciones
-y plantillas y no necesitan Python para usarse.
+Requiere Node.js 20 o posterior con npm. Ejecuta desde cualquier carpeta:
 
 Desde este repositorio:
 
 ```bash
-python3 scripts/install.py
+npx --yes github:arnaly/sdd-skills install
 ```
 
-Esta orden instala las skills para tu usuario. Si quieres preparar también un
-repositorio destino en la misma orden, pasa `--project` como se muestra abajo.
+npm descarga el paquete desde GitHub en su caché y ejecuta el instalador. No
+necesitas clonar este repositorio ni instalar Python. Las ocho skills y sus
+plantillas se copian a `~/.agents/skills` y quedan disponibles para tu usuario
+en Codex desde todos tus proyectos.
 
-Para instalar las skills **y preparar otro repositorio con una sola orden**, abre
-el terminal dentro del repositorio destino y ejecuta la ruta de tu clon:
+El comando no crea una constitución ni modifica `AGENTS.md`, `package.json` o
+archivos del proyecto desde el que lo ejecutas. La adopción del método se hace
+después con las skills.
+
+También puedes elegir un destino de skills reconocido por tu entorno:
 
 ```bash
-python3 /ruta/a/sdd-skills/scripts/install.py --project .
+npx --yes github:arnaly/sdd-skills install --dest /ruta/a/skills
 ```
 
-En tu entorno actual, el clon está en `/home/arnau/github_repos/sdd-skills`; desde
-la raíz del repositorio destino, el comando concreto es:
-
-```bash
-python3 /home/arnau/github_repos/sdd-skills/scripts/install.py --project .
-```
-
-Instala las skills para tu usuario, añade una sección SDD gestionada a su
-`AGENTS.md` y crea `docs/constitution.md` como borrador, si no existe. Conserva
-el resto de `AGENTS.md` y no reemplaza una constitución existente. Repetirlo es
-seguro: actualiza su propia sección, conserva la constitución y deja intactas las
-skills que no hayan cambiado.
-
-Luego, en Codex abierto en el repositorio, usa `$sdd-constitution` para acordar
-los seis principios. La orden crea el borrador, pero no puede inventar ni aprobar
-esos principios por ti.
-
-Instala las ocho skills y sus recursos en `~/.agents/skills`, disponibles para tu
-usuario en Codex. También puedes elegir un destino de skills reconocido por tu
-entorno:
-
-```bash
-python3 scripts/install.py --dest /ruta/a/skills
-```
-
-El instalador no necesita red ni modifica proyectos, `AGENTS.md` o la configuración
-de Codex salvo que pases `--project` expresamente.
 Una instalación idéntica no cambia nada. Si hay diferencias, aborta antes de
 instalar ninguna skill. No reemplaza archivos, enlaces ni carpetas ajenas.
 
-Para actualizar una instalación gestionada por este instalador, después de revisar
-los cambios de la versión que tienes en este repositorio:
+Para actualizar una instalación gestionada por este instalador:
 
 ```bash
-python3 scripts/install.py --update
+npx --yes github:arnaly/sdd-skills update
 ```
 
 La actualización es explícita y conserva las carpetas reemplazadas, incluidos tus
@@ -69,8 +45,13 @@ y la preparación temporal quedan fuera del directorio de skills para evitar que
 el asistente descubra versiones antiguas o incompletas.
 Para restaurarla, aparta la skill nueva y devuelve la carpeta de la copia a su
 ubicación original. Si elegiste otro destino, pasa el mismo `--dest` al actualizar.
-No hay actualizaciones automáticas. Las instalaciones son copias: modificar este
-repositorio no modifica las skills instaladas.
+No hay actualizaciones automáticas. Las instalaciones son copias; la actualización
+reemplaza el contenido gestionado y conserva tus cambios anteriores en el respaldo.
+También reconoce instalaciones realizadas con el instalador Python anterior.
+
+El paquete se ejecuta directamente desde GitHub. No hace falta una publicación en
+el registro npm para usar estas órdenes. El funcionamiento de `npx` está descrito
+en la [documentación de npm](https://docs.npmjs.com/cli/commands/npm-exec/).
 
 Si las skills no aparecen en Codex, reinicia la sesión. Consulta las ubicaciones
 admitidas en la [documentación de skills de Codex](https://learn.chatgpt.com/docs/build-skills).
@@ -153,11 +134,15 @@ la consolidación de specs. Las plantillas están en `skills/*/assets/`; las
 instrucciones, en `skills/*/SKILL.md`. Puedes adaptarlas aquí y actualizar después
 tu instalación. Cada skill lleva sus recursos sin depender de la ruta del clon.
 
-Para comprobar el repositorio y el instalador:
+Para desarrollar o comprobar el instalador, desde un clon del repositorio:
 
 ```bash
-python3 -m unittest discover -s tests -v
+npm test
 ```
+
+El instalador Python original se conserva para instalaciones locales desde un
+clon (`python3 scripts/install.py`). Sus pruebas se ejecutan con
+`python3 -m unittest discover -s tests -v`. La instalación con `npx` solo usa Node.js.
 
 Los tests comprueban instalación, conflictos, recuperación y recursos empaquetados.
 Los [escenarios de comportamiento](tests/scenarios.md) describen además los
