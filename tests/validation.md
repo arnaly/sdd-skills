@@ -17,8 +17,12 @@ La distribución desde GitHub se añadió después de la evaluación inicial:
 - Se comprobaron conflictos, respaldo de cambios locales, recuperación tras fallo,
   compatibilidad con instalaciones Python, ayuda y rechazo de `--project`.
 
-La orden pública documentada descarga el paquete desde GitHub; esta prueba del
-paquete local comprueba su contenido y ejecutable de forma independiente de la red.
+También se ejecutó la instalación directamente desde GitHub, sin un clon local:
+`npx --yes --allow-git=all git+ssh://git@github.com/arnaly/sdd-skills.git install`
+con destino y caché temporales. Resultado: ocho skills instaladas; los 26 recursos
+coinciden con el origen y el proyecto de ejecución permanece intacto. El repositorio
+es privado y se usó el acceso SSH autorizado del entorno. En npm 12 se necesita
+`--allow-git=all`; sin esa opción, npm bloquea la descarga antes de instalar.
 
 ## Comprobaciones automatizadas
 

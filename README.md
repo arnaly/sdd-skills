@@ -6,16 +6,20 @@ lenguaje y del framework, para proyectos nuevos y existentes.
 
 ## Instalar una vez
 
-Requiere Node.js 20 o posterior con npm. Ejecuta desde cualquier carpeta:
+Requiere Node.js 20 o posterior con npm y Git. El repositorio es privado, así que
+necesitas una clave SSH autorizada en GitHub con acceso a `arnaly/sdd-skills`.
+Ejecuta desde cualquier carpeta:
 
 Desde este repositorio:
 
 ```bash
-npx --yes github:arnaly/sdd-skills install
+npx --yes --allow-git=all git+ssh://git@github.com/arnaly/sdd-skills.git install
 ```
 
-npm descarga el paquete desde GitHub en su caché y ejecuta el instalador. No
-necesitas clonar este repositorio ni instalar Python. Las ocho skills y sus
+npm obtiene el paquete desde GitHub mediante tu acceso SSH, lo guarda en su caché
+y ejecuta el instalador. `--allow-git=all` autoriza esta descarga de Git en npm 12;
+no cambia su configuración global. No necesitas clonar este repositorio ni
+instalar Python. Las ocho skills y sus
 plantillas se copian a `~/.agents/skills` y quedan disponibles para tu usuario
 en Codex desde todos tus proyectos.
 
@@ -26,7 +30,7 @@ después con las skills.
 También puedes elegir un destino de skills reconocido por tu entorno:
 
 ```bash
-npx --yes github:arnaly/sdd-skills install --dest /ruta/a/skills
+npx --yes --allow-git=all git+ssh://git@github.com/arnaly/sdd-skills.git install --dest /ruta/a/skills
 ```
 
 Una instalación idéntica no cambia nada. Si hay diferencias, aborta antes de
@@ -35,7 +39,7 @@ instalar ninguna skill. No reemplaza archivos, enlaces ni carpetas ajenas.
 Para actualizar una instalación gestionada por este instalador:
 
 ```bash
-npx --yes github:arnaly/sdd-skills update
+npx --yes --allow-git=all git+ssh://git@github.com/arnaly/sdd-skills.git update
 ```
 
 La actualización es explícita y conserva las carpetas reemplazadas, incluidos tus
@@ -52,6 +56,8 @@ También reconoce instalaciones realizadas con el instalador Python anterior.
 El paquete se ejecuta directamente desde GitHub. No hace falta una publicación en
 el registro npm para usar estas órdenes. El funcionamiento de `npx` está descrito
 en la [documentación de npm](https://docs.npmjs.com/cli/commands/npm-exec/).
+Si SSH devuelve `Permission denied (publickey)`, configura el acceso de tu terminal
+a GitHub antes de repetir la instalación. No se cambia la visibilidad del repositorio.
 
 Si las skills no aparecen en Codex, reinicia la sesión. Consulta las ubicaciones
 admitidas en la [documentación de skills de Codex](https://learn.chatgpt.com/docs/build-skills).
