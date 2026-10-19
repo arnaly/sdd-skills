@@ -184,7 +184,7 @@ class InstallerTests(unittest.TestCase):
         project.mkdir()
         instructions = project / "AGENTS.md"
         instructions.write_text("Keep existing instructions.\n", encoding="utf-8")
-        destination = project / "skills"
+        destination = project / ".agents" / "skills"
         for args, expected in (([], "Instaladas/actualizadas: 8"), ([], "sin cambios: 8")):
             result = subprocess.run(
                 [sys.executable, str(ROOT / "scripts" / "install.py"), *args],
@@ -202,10 +202,10 @@ class InstallerTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("Instaladas/actualizadas: 1", result.stdout)
-        backup, = (project / ".skills-sdd-backups").iterdir()
+        backup, = (project / ".agents" / ".skills-sdd-backups").iterdir()
         self.assertEqual((backup / "sdd-plan" / "SKILL.md").read_text(), "local edit")
         self.assertEqual(instructions.read_text(), "Keep existing instructions.\n")
-        self.assertFalse((project / ".agents").exists())
+        self.assertFalse((project / "skills").exists())
 
 
 class PackageTests(unittest.TestCase):

@@ -162,8 +162,8 @@ def install(source: Path, destination: Path, *, update: bool = False) -> Install
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--dest", type=Path, default=Path.cwd() / "skills",
-        help="Directorio de skills (por defecto: ./skills en el repositorio actual)",
+        "--dest", type=Path, default=Path.cwd() / ".agents" / "skills",
+        help="Directorio de skills (por defecto: ./.agents/skills en el repositorio actual)",
     )
     parser.add_argument(
         "--update", action="store_true",

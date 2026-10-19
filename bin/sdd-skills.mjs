@@ -10,7 +10,7 @@ const help = `Uso: sdd-skills [install|update] [--dest DIRECTORIO]
 
   install       Instalar las ocho skills (opción por defecto).
   update        Actualizar las instalaciones propias, con copia de respaldo.
-  --dest RUTA   Destino de skills; por defecto ./skills en el repositorio actual.
+  --dest RUTA   Destino de skills; por defecto ./.agents/skills en el repositorio actual.
   --help        Mostrar esta ayuda.
   --version     Mostrar la versión.
 
@@ -21,7 +21,7 @@ try {
     throw new Error('Se necesita Node.js 20 o posterior.');
   }
   const args = process.argv.slice(2);
-  let destination = resolve('skills');
+  let destination = resolve('.agents', 'skills');
   let command;
   let mode;
   for (let index = 0; index < args.length; index += 1) {

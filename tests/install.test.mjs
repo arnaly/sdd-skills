@@ -178,7 +178,7 @@ test('CLI honors an explicit destination without changing the calling project', 
   assert.deepEqual(snapshot(project), before);
 });
 
-test('CLI installs and updates in ./skills of the calling project by default', (t) => {
+test('CLI installs and updates in ./.agents/skills of the calling project by default', (t) => {
   const { base } = fixture(t);
   const project = join(base, 'current project');
   const home = join(base, 'home');
@@ -187,7 +187,7 @@ test('CLI installs and updates in ./skills of the calling project by default', (
   fs.writeFileSync(join(project, 'AGENTS.md'), 'Keep existing instructions.\n');
   fs.writeFileSync(join(project, 'package.json'), '{"name":"caller"}\n');
   const before = snapshot(project);
-  const destination = join(project, 'skills');
+  const destination = join(project, '.agents', 'skills');
   const run = (...args) => spawnSync(process.execPath, [join(root, 'bin', 'sdd-skills.mjs'), ...args], {
     cwd: project, env: { ...process.env, HOME: home, USERPROFILE: home }, encoding: 'utf8',
   });
@@ -203,11 +203,11 @@ test('CLI installs and updates in ./skills of the calling project by default', (
   assert.ifError(updated.error);
   assert.equal(updated.status, 0, updated.stderr);
   assert.match(updated.stdout, /Instaladas\/actualizadas: 1/);
-  const backups = join(project, '.skills-sdd-backups');
+  const backups = join(project, '.agents', '.skills-sdd-backups');
   const [backup] = fs.readdirSync(backups);
   assert.equal(fs.readFileSync(join(backups, backup, 'sdd-plan', 'SKILL.md'), 'utf8'), 'local edit');
   for (const [path, content] of Object.entries(before)) assert.equal(snapshot(project)[path], content);
-  assert.ok(!fs.existsSync(join(project, '.agents')));
+  assert.ok(!fs.existsSync(join(project, 'skills')));
   assert.deepEqual(fs.readdirSync(home), []);
 });
 
@@ -248,14 +248,14 @@ test('the npm package installs offline outside the clone with all bundled resour
   fs.writeFileSync(join(project, 'package.json'), '{"name":"caller","version":"1.0.0"}\n');
   fs.writeFileSync(join(project, 'AGENTS.md'), 'Keep existing instructions.\n');
   const before = snapshot(project);
-  const destination = join(project, 'skills');
+  const destination = join(project, '.agents', 'skills');
   const result = spawnSync('npm', ['exec', '--yes', `--package=${join(base, info.filename)}`, '--', 'sdd-skills', 'install'], { cwd: project, env, encoding: 'utf8' });
   assert.ifError(result.error);
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /Instaladas\/actualizadas: 8/);
   const after = snapshot(project);
   for (const [path, content] of Object.entries(before)) assert.equal(after[path], content);
-  assert.deepEqual(fs.readdirSync(project).sort(), ['AGENTS.md', 'package.json', 'skills']);
+  assert.deepEqual(fs.readdirSync(project).sort(), ['.agents', 'AGENTS.md', 'package.json']);
   assert.ok(fs.existsSync(join(destination, 'sdd-specify', 'references', 'ears.md')));
   assert.ok(fs.existsSync(join(destination, 'sdd-validate', 'assets', 'validation.md')));
 });

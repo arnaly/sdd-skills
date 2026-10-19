@@ -18,11 +18,15 @@ npm obtiene el paquete público desde GitHub, lo guarda en su caché
 y ejecuta el instalador. Sin subcomando se usa `install`. `--allow-git=all`
 autoriza esta descarga de Git en npm 12;
 no cambia su configuración global. No necesitas clonar este repositorio ni
-instalar Python. Las ocho skills y sus plantillas se copian a `./skills`,
+instalar Python. Las ocho skills y sus plantillas se copian a `./.agents/skills`,
 dentro del repositorio actual. Repite la instalación en cada proyecto donde
 quieras usarlas.
 
-El comando crea las carpetas `skills/sdd-*`. No crea una constitución ni modifica
+Esta es la ubicación local que Codex descubre automáticamente; `~/.agents/skills`
+corresponde a una instalación global para el usuario. Una carpeta `./skills`
+por sí sola no se detecta como instalación local.
+
+El comando crea las carpetas `.agents/skills/sdd-*`. No crea una constitución ni modifica
 `AGENTS.md`, `package.json` u otros archivos existentes del proyecto. La adopción
 del método se hace después con las skills.
 
@@ -42,7 +46,7 @@ npx --yes --allow-git=all github:arnaly/sdd-skills update
 ```
 
 La actualización es explícita y conserva las carpetas reemplazadas, incluidos tus
-cambios locales, en una carpeta hermana del destino: `./.skills-sdd-backups/`
+cambios locales, en una carpeta hermana del destino: `./.agents/.skills-sdd-backups/`
 para la instalación por defecto. Imprime la ubicación exacta de la copia. Las copias
 y la preparación temporal quedan fuera del directorio de skills para evitar que
 el asistente descubra versiones antiguas o incompletas.
@@ -58,6 +62,18 @@ en la [documentación de npm](https://docs.npmjs.com/cli/commands/npm-exec/).
 
 Si las skills no aparecen en Codex, reinicia la sesión. Consulta las ubicaciones
 admitidas en la [documentación de skills de Codex](https://learn.chatgpt.com/docs/build-skills).
+
+### Reparar una instalación en `./skills`
+
+Si usaste la versión que instalaba en `./skills`, ejecuta desde la raíz del proyecto:
+
+```bash
+npx --yes --allow-git=all github:arnaly/sdd-skills --dest .agents/skills
+```
+
+Esto instala en la ruta reconocida sin borrar la copia anterior. Si modificaste
+archivos en `skills/sdd-*`, conserva y traslada esos cambios a la nueva instalación.
+Reinicia Codex si todavía no aparecen las skills.
 
 ## Activar en un proyecto
 
@@ -145,7 +161,7 @@ npm test
 
 El instalador Python original se conserva para instalaciones locales desde un
 clon (`python3 /ruta/al/clon/scripts/install.py`, ejecutado desde el proyecto de
-destino). También instala por defecto en `./skills`. Sus pruebas se ejecutan con
+destino). También instala por defecto en `./.agents/skills`. Sus pruebas se ejecutan con
 `python3 -m unittest discover -s tests -v`. La instalación con `npx` solo usa Node.js.
 
 Los tests comprueban instalación, conflictos, recuperación y recursos empaquetados.
